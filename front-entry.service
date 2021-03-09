@@ -1,0 +1,14 @@
+[Unit]
+Description=Front-entry http proxy
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/home/centos/front-entry/front-entry /home/centos/front-entry/config.toml
+
+[Install]
+WantedBy=multi-user.target

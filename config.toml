@@ -1,0 +1,10 @@
+[proxy]
+"rpc.gambinode.com" = "http://localhost:7072"
+"ws.gambinode.com" = "http://localhost:7074"
+"monitor.gambinode.com" = "http://localhost:8080"
+"netdata.gambinode.com" = "http://localhost:19999"
+"152.228.141.68" = "http://localhost:8080"
+
+[tls]
+certfile = "./fullchain.pem"
+keyfile = "./privkey.pem"
