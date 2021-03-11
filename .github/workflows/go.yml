@@ -22,11 +22,8 @@ jobs:
       run: go mod download
 
     - name: Build
-      run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -v -installsuffix cgo -ldflags "-w -s -extldflags '-static' " ./...
-    
-    - name: Debug
-      run: ls -la
-    
+      run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -v -installsuffix cgo -ldflags "-w -s -extldflags '-static' " -o . ./...
+
     - name: Upload binary
       uses: actions/upload-artifact@v2
       with:
