@@ -1,10 +1,10 @@
 name: Go
 
-on:
+on: 
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+    - '*'
+
 
 jobs:
 
@@ -23,3 +23,20 @@ jobs:
 
     - name: Build
       run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -v -installsuffix cgo -ldflags "-w -s -extldflags '-static' " ./...
+
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    
+    - name: Get current tag
+      id: tag
+      uses: dawidd6/action-get-tag@v1
+    
+    - name: Create release
+      run: tar -czvf release-${{steps.tag.outputs.tag}}.tar.gz front-entry.service front-entry config.toml
+    
+    - uses: ncipollo/release-action@v1
+      with:
+        artifacts: "release-${{steps.tag.outputs.tag}}.tar.gz"
+        token: ${{ secrets.GITHUB_TOKEN }}
