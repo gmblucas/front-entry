@@ -1,0 +1,31 @@
+name: Releases
+
+on: 
+  push:
+    tags:
+    - '*'
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    
+    - name: Get tag
+    id: tag
+    uses: dawidd6/action-get-tag@v1
+    
+    - name: Download build
+    uses: actions/download-artifact@v2
+    with:
+      name: front-entry
+          
+    - name: Create release
+    - run: |
+        tar -czvf release-${{steps.tag.outputs.tag}}.tar.gz front-entry.service front-entry config.toml
+    
+    - uses: ncipollo/release-action@v1
+      with:
+        artifacts: "release-${{steps.tag.outputs.tag}}.tar.gz"
+        token: ${{ secrets.GITHUB_TOKEN }}
