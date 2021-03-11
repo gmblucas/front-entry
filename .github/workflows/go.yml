@@ -2,8 +2,8 @@ name: Go
 
 on: 
   push:
-    tags:
-    - '*'
+    branches: 
+      [main]
 
 
 jobs:
@@ -23,7 +23,10 @@ jobs:
 
     - name: Build
       run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -v -installsuffix cgo -ldflags "-w -s -extldflags '-static' " ./...
-      
+    
+    - name: Debug
+      run: ls -la
+    
     - name: Upload binary
       uses: actions/upload-artifact@v2
       with:
@@ -40,7 +43,7 @@ jobs:
       id: tag
       uses: dawidd6/action-get-tag@v1
     
-    - name: Download math result for job 1
+    - name: Download built binary
       uses: actions/download-artifact@v2
       with:
         name: front-entry
