@@ -23,6 +23,12 @@ jobs:
 
     - name: Build
       run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -v -installsuffix cgo -ldflags "-w -s -extldflags '-static' " ./...
+      
+    - name: Upload binary
+      uses: actions/upload-artifact@v2
+      with:
+        name: front-entry
+        path: front-entry
 
   publish:
     runs-on: ubuntu-latest
@@ -32,6 +38,11 @@ jobs:
     - name: Get current tag
       id: tag
       uses: dawidd6/action-get-tag@v1
+    
+    - name: Download math result for job 1
+      uses: actions/download-artifact@v2
+      with:
+        name: front-entry
     
     - name: Create release
       run: tar -czvf release-${{steps.tag.outputs.tag}}.tar.gz front-entry.service front-entry config.toml
