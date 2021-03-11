@@ -4,7 +4,8 @@
 "monitor.gambinode.com" = "http://localhost:8080"
 "netdata.gambinode.com" = "http://localhost:19999"
 "152.228.141.68" = "http://localhost:8080"
+"localhost" = "http://localhost:19999"
 
 [tls]
-certfile = "./fullchain.pem"
-keyfile = "./privkey.pem"
+"certfile" = "fullchain.pem"
+"keyfile" = "privkey.pem"

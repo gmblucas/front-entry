@@ -6,17 +6,11 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"os"
 
-	"github.com/BurntSushi/toml"
+	config "github.com/GmbLucas/front-entry/pkg"
 )
 
 var exit = make(chan error)
-var conf Config
-type Config struct {
-	Proxy map[string]string `toml:proxy`
-	Tls map[string]string `toml:tls`
-}
 
 func serveReverseProxy(target string, res http.ResponseWriter, req *http.Request) {
 	url, _ := url.Parse(target)
@@ -25,7 +19,7 @@ func serveReverseProxy(target string, res http.ResponseWriter, req *http.Request
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	if t, ok := conf.Proxy[r.Host]; ok {
+	if t, ok := config.Get().Proxy[r.Host]; ok {
 		serveReverseProxy(t, w, r)
 		log.Println("OK", r.RemoteAddr, r.Host, r.URL)
 	} else {
@@ -34,12 +28,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("usage: front-entry config.toml")
+	if err := config.Init(); err != nil {
+		fmt.Print("config init: ", err)
 		return
-	}
-	if _, err := toml.DecodeFile(os.Args[1], &conf); err != nil {
-		panic(err)
 	}
 
 	http.HandleFunc("/", handler)
@@ -49,14 +40,11 @@ func main() {
 		}
 	}()
 	go func() {
-		if err := http.ListenAndServeTLS(
-			":443",
-			conf.Tls["certfile"],
-			conf.Tls["keyfile"],
-			nil); err != nil {
+		if err := http.ListenAndServeTLS(":443", config.Get().Tls["certfile"], config.Get().Tls["keyfile"], nil); err != nil {
 			exit<-err
 		}
 	}()
 
-	panic(<-exit)
+	log.Println("ready")
+	log.Fatal(<-exit)
 }
