@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -33,6 +34,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	if len(os.Args) != 2 {
+		fmt.Println("usage: front-entry config.toml")
+		return
+	}
 	if _, err := toml.DecodeFile(os.Args[1], &conf); err != nil {
 		panic(err)
 	}
